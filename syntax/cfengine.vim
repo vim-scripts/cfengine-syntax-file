@@ -1,10 +1,10 @@
 " cfengine syntax file
 " Filename:     cfengine.vim
-" Language:     cfengine configuration file ( /var/cfengine/inputs/cf.* )
+" Language:     cfengine configuration file 
 " Maintainer:   Marcus Spading <ms@fragmentum.net>
 " URL:          http://fragmentum.net/vim/syntax/cfengine.vim
-" Last Change:  2002 Jul 03
-" Version:      0.1
+" Last Change:  2002 Jul 06
+" Version:      0.2
 "
 " cfengine action
 " action-type:
@@ -21,41 +21,66 @@ endif
 
 syn case ignore
 
-syn match   cfengineCompoundClass      "^\s*.*::$"
-syn match   cfengineAssignmentOperator "="
-syn match   cfengineLinkOperator       "->"
-syn match   cfengineLinkOperator       "->!"
-syn match   cfengineVariable           "\$(.\{-})"
-syn region  cfengineVariableDef start="(\s*" end="\s*)" contains=cfengineKeyword,cfengineHelpers
+syn match   cfengineCompoundClass      "^\s*.*::\s*$"
+"syn match   cfengineAssignmentOperator "="
+syn match   cfengineLinkOperator       "[-+]>[!]\{0,1}"
+syn match   cfengineVariable           "$(.\{-})"
+syn match   cfengineVariable           "${.\{-}}"
+syn region  cfengineVariableDef matchgroup=cfengineVariable start="(\s*" end="\s*)" contains=cfengineKeyword,cfengineHelpers,cfengineActions,cfengineIPAddress,cfengineVariable
 syn match   cfengineNumber             "\<\d\+\|inf\>"
-syn region  cfengineBlock  start="{" end="}" contains=cfengineBlock,cfengineEditAction,cfengineString
+syn match   cfengineIPAddress          "\<\d\{1,3}.\d\{1,3}.\d\{1,3}.\d\{1,3}\>"
+syn region  cfengineBlock  start="{" end="}" contains=cfengineBlock,cfengineEditAction,cfengineString,cfengineVariable
 syn region  cfengineString start=+"+ skip=+\\\\\|\\"+ end=+"+ oneline contains=cfengineVariable containedin=cfengineBlock
 syn region  cfengineString start=+'+ skip=+\\\\\|\\'+ end=+'+ oneline contains=cfengineVariable containedin=cfengineBlock
 
 syn keyword cfengineBoolean    on off true false 
 
-syn keyword cfengineKeyword    access actionsequence AddClasses AddInstallable BinaryPaddingChar
-syn keyword cfengineKeyword    ChecksumDatabase ChecksumUpdates ChildLibPath CopyLinks DefaultCopyType
-syn keyword cfengineKeyword    DeleteNonUserFiles DeleteNonOwnerFiles DeleteNonUserMail DeleteNonOwnerMail
-syn keyword cfengineKeyword    domain DryRun EditBinaryFileSize EditFileSize EmptyResolvConf Exclamation
-syn keyword cfengineKeyword    ExcludeCopy ExcludeLinks ExpireAfter HomePattern IfElapsed Inform InterfaceName
-syn keyword cfengineKeyword    FileExtensions LinkCopies LogDirectory LogTidyHomeFiles moduledirectory mountpattern
-syn keyword cfengineKeyword    netmask NonAlphaNumFiles nfstype RepChar Repository Schedule SecureInput
-syn keyword cfengineKeyword    SensibleCount SensibleSize ShowActions site faculty SplayTime Split smtpserver
-syn keyword cfengineKeyword    SpoolDirectories SuspiciousNames sysadm Syslog timezone TimeOut Verbose
-syn keyword cfengineKeyword    Warnings WarnNonUserFiles WarnNonOwnerFiles WarnNonUserMail WarnNonOwnerMail
-syn region  cfengineHelpers matchgroup=cfengineKeyword start="FileExists(" end=")" contained oneline 
-syn region  cfengineHelpers matchgroup=cfengineKeyword start="IsDir(" end=")" contained oneline 
-syn region  cfengineHelpers matchgroup=cfengineKeyword start="IsNewerThan(" end=")" contained oneline 
+syn keyword cfengineKeyword    access actionsequence addclasses addinstallable binarypaddingchar
+syn keyword cfengineKeyword    checksumdatabase checksumupdates childlibpath copylinks defaultcopytype
+syn keyword cfengineKeyword    deletenonuserfiles deletenonownerfiles deletenonusermail deletenonownermail
+syn keyword cfengineKeyword    domain dryrun editbinaryfilesize editfilesize emptyresolvconf exclamation
+syn keyword cfengineKeyword    excludecopy excludelinks expireafter homepattern ifelapsed inform interfacename
+syn keyword cfengineKeyword    fileextensions linkcopies logdirectory logtidyhomefiles moduledirectory
+syn keyword cfengineKeyword    mountpattern netmask nonalphanumfiles nfstype repchar repository schedule
+syn keyword cfengineKeyword    secureinputs sensiblecount sensiblesize showactions site faculty splaytime split 
+syn keyword cfengineKeyword    smtpserver spooldirectories suspiciousnames sysadm syslog timezone timeout 
+syn keyword cfengineKeyword    verbose warnings warnnonuserfiles warnnonownerfiles warnnonusermail warnnonownermail
+" cfservd keywords
+syn case match
+syn keyword cfengineKeyword    AllowConnectionsFrom AllowMultipleConnectionsFrom AllowUser AutoExecCommand
+syn keyword cfengineKeyword    AutoExecInterval cfrunCommand DenyBadClocks DenyConnectionsFrom IfElapsed
+syn keyword cfengineKeyword    LogAllConnections MaxConnections TrustKeysFrom DynamicAddresses 
+syn case ignore
 
-syn keyword cfengineOption     age dest m[ode] o[wner] g[roup] act[ion] silent fix preserve keep backup repository stealth timestamps
-syn keyword cfengineOption     symlink incl[ude] excl[ude] ignore filter r[ecurse] type linktype typecheck define elsedefine
+syn keyword cfengineActions    addmounts checktimezone copy directories disable editfiles files links mailcheck module
+syn keyword cfengineActions    mountall mountinfo netconfig required resolve shellcommands tidy unmount processes
+
+syn region  cfengineHelpers    matchgroup=cfengineKeyword start="FileExists(" end=")"     contained oneline 
+syn region  cfengineHelpers    matchgroup=cfengineKeyword start="IsDir(" end=")"          contained oneline 
+syn region  cfengineHelpers    matchgroup=cfengineKeyword start="IsNewerThan(" end=")"    contained oneline 
+syn region  cfengineHelpers    matchgroup=cfengineKeyword start="AccessedBefore(" end=")" contained oneline
+syn region  cfengineHelpers    matchgroup=cfengineKeyword start="ChangedBefore(" end=")"  contained oneline
+syn region  cfengineHelpers    matchgroup=cfengineKeyword start="IPRange(" end=")"        contained oneline
+syn region  cfengineHelpers    matchgroup=cfengineKeyword start="IsLink(" end=")"         contained oneline
+syn region  cfengineHelpers    matchgroup=cfengineKeyword start="IsPlain(" end=")"        contained oneline
+syn region  cfengineHelpers    matchgroup=cfengineKeyword start="ReturnsZero(" end=")"    contained oneline
+
+syn keyword cfengineOption     age acl dest m[ode] o[wner] g[roup] act[ion] silent fix preserve keep backup repository stealth timestamps
+syn keyword cfengineOption     chroot chdir symlink incl[ude] excl[ude] ignore filter r[ecurse] type linktype typecheck define elsedefine
 syn keyword cfengineOption     force forcedirs forceipv4 size server trustkey encrypt verify oldserver purge syslog inform
-syn keyword cfengineOption     pat[tern] rotate flags links stop traverse tidy checksum
+syn keyword cfengineOption     pat[tern] rotate flags links stop traverse tidy checksum matches dirlinks rmdirs deletedir deletefstab
 
-syn keyword cfengineAction     warnall warndirs warnplain
-syn keyword cfengineAction     fixall fixdirs fixplain
-syn keyword cfengineAction     touch linkchildren create compress alert
+syn keyword cfengineOptionVal  warnall warndirs warnplain
+syn keyword cfengineOptionVal  fixall fixdirs fixplain
+syn keyword cfengineOptionVal  touch linkchildren create compress alert
+syn keyword cfengineOptionVal  stop traverse tidy md5 sha inf
+syn keyword cfengineOptionVal  hard relative absolute checksum ctime kill force
+syn keyword cfengineOptionVal  true false dump signal do warn bymatch 
+syn keyword cfengineOptionVal  empty truncate all sub
+syn keyword cfengineOptionVal  ctime mtime atime
+
+syn keyword cfengineSigVal     hup int quit ill trap iot emt fpe kill bus segv sys pipe alrm term urg stop
+syn keyword cfengineSigVal     tstp cont chld gttin gttou io xcpu xfsz vtalrm prof winch lost usr1 usr2 
 
 syn keyword cfengineEditAction AbortAtLineMatching Append contained
 syn keyword cfengineEditAction AppendIfNoSuchLine AppendIfNoLineMatching AppendToLineIfNotContains contained
@@ -87,16 +112,14 @@ syn keyword cfengineFilter     Type reg link dir socket fifo door char block con
 syn keyword cfengineFilter     ExecRegex NameRegex IsSymLinkTo ExecProgram Result contained
 syn keyword cfengineFilter     PID PPID PGID RSize VSize Status Command FromTTime ToTTime FromSTime ToSTime TTY contained
 syn keyword cfengineFilter     Priority Threads contained
-syn case match
 
-syn case ignore
 syn keyword cfengineActionType control: files: acl: binservers: broadcast: control: copy: defaultroute:
 syn keyword cfengineActionType disks: directories: disable: editfiles: files: filters: groups: classes:
 syn keyword cfengineActionType homeservers: ignore: import: interfaces: links: mailserver: miscmounts:
-syn keyword cfengineActionType mountables: processes: required: resolv: shellcommands: tidy: unmount: 
+syn keyword cfengineActionType mountables: processes: required: resolve: shellcommands: tidy: unmount: 
 
 " comments last overriding everything else
-syn match   cfengineComment            "^\s*#.*$" contains=cfengineTodo
+syn match   cfengineComment            "\s*#.*$" contains=cfengineTodo
 syn keyword cfengineTodo               TODO NOTE FIXME XXX contained
 
 " Define the default highlighting.
@@ -113,7 +136,7 @@ if version >= 508 || !exists("did_cfengine_syn_inits")
   "HiLink cfengineAssignmentOperator String
   HiLink cfengineLinkOperator       String
   HiLink cfengineVariable           Special
-  HiLink cfengineVariableDef        Special
+  HiLink cfengineVariableDef        NONE
   HiLink cfengineBoolean            Boolean
   HiLink cfengineEditAction         Identifier
   HiLink cfengineFilter             Identifier
@@ -121,12 +144,15 @@ if version >= 508 || !exists("did_cfengine_syn_inits")
   HiLink cfengineOption             Statement
   HiLink cfengineCompoundClass      Type
   HiLink cfengineActionType         PreProc
+  HiLink cfengineActions            PreProc
   HiLink cfengineComment            Comment
   HiLink cfengineNumber             Number
+  HiLink cfengineIPAddress          Number
   HiLink cfengineQuota              Number
   HiLink cfengineString             String
   HiLink cfengineTodo               Todo
-  HiLink cfengineAction             Constant
+  HiLink cfengineOptionVal          Constant
+  HiLink cfengineSigVal             Constant
 
   delcommand HiLink
 endif
